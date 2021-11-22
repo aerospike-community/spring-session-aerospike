@@ -1,9 +1,18 @@
-.gradle
-/build/
-!gradle/wrapper/gradle-wrapper.jar
-/bin/
-target/*
+## Maven
+target/
 
-.classpath
-.settings
+## Eclipse
+.settings/
 .project
+.classpath
+
+## IntelliJ
+out/
+.idea/
+.idea_modules/
+*.iml
+*.ipr
+*.iws
+
+## OS X
+.DS_Store

@@ -47,7 +47,7 @@ public class AerospikeIndexedSessionRepository
 
     static PrincipalNameResolver PRINCIPAL_NAME_RESOLVER = new PrincipalNameResolver();
 
-    AerospikeOperations aerospikeOperations;
+    private final AerospikeOperations aerospikeOperations;
 
     private static final String SPRING_SECURITY_CONTEXT = "SPRING_SECURITY_CONTEXT";
 

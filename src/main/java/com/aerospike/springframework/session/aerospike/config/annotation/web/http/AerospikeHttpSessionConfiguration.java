@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.data.aerospike.core.AerospikeTemplate;
+import org.springframework.data.aerospike.core.AerospikeOperations;
 import org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration;
 
 import com.aerospike.springframework.session.aerospike.AerospikeIndexedSessionRepository;
@@ -42,9 +42,9 @@ public class AerospikeHttpSessionConfiguration extends SpringHttpSessionConfigur
     private String namespace;
 
     @Bean
-    public AerospikeIndexedSessionRepository aerospikeSessionRepository(AerospikeTemplate aerospikeTemplate) {
+    public AerospikeIndexedSessionRepository aerospikeSessionRepository(AerospikeOperations aerospikeOperations) {
         AerospikeIndexedSessionRepository repository =
-                new AerospikeIndexedSessionRepository(aerospikeTemplate);
+                new AerospikeIndexedSessionRepository(aerospikeOperations);
         repository.setMaxInactiveIntervalInSeconds(this.maxInactiveIntervalInSeconds);
         repository.setNamespace(this.namespace);
         return repository;

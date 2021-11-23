@@ -104,7 +104,9 @@ public class AerospikeIndexedSessionRepository
 
     @Override
     public AerospikeSession createSession() {
-        return new AerospikeSession();
+        AerospikeSession aerospikeSession = new AerospikeSession();
+        aerospikeSession.setMaxInactiveInterval(Duration.ofSeconds(this.maxInactiveIntervalInSeconds));
+        return aerospikeSession;
     }
 
     @Override

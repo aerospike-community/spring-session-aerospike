@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.aerospike</groupId>
   <artifactId>spring-session-aerospike</artifactId>
   <version>1.0.0.RELEASE</version>  
   <packaging>jar</packaging>
 
   <name>spring-session-aerospike</name>
-  <description>An implentation of SpringSession that uses an Aerospike DB as the backing store</description>
+  <description>An implantation of SpringSession that uses an Aerospike DB as the backing store</description>
   <url>http://github.com/aerospike/spring-session-aerospike</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven-compiler-plugin>3.5.1</maven-compiler-plugin>
+    <maven-compiler-source>1.8</maven-compiler-source>
+    <maven-compiler-target>1.8</maven-compiler-target>
+    <maven-source-plugin>3.2.1</maven-source-plugin>
+    <maven-javadoc-plugin>3.3.1</maven-javadoc-plugin>
+    <maven-gpg-plugin>1.6</maven-gpg-plugin>
+    <aerospike-client>5.1.10</aerospike-client>
+    <spring-data-aerospike>3.3.0</spring-data-aerospike>
+    <spring-session-core>2.6.0</spring-session-core>
+    <javax.annotation-api>1.3.2</javax.annotation-api>
+    <mockito-core>4.1.0</mockito-core>
+    <assertj-core>3.21.0</assertj-core>
+    <spring-test>5.3.13</spring-test>
+    <javax.servlet-api>4.0.1</javax.servlet-api>
+    <spring-web>5.3.13</spring-web>
+    <junit>4.13.2</junit>
+  </properties>
 
   <licenses>
     <license>
@@ -47,85 +68,77 @@
     <dependency>
       <groupId>com.aerospike</groupId>
       <artifactId>aerospike-client</artifactId>
-      <version>3.3.4</version>
+      <version>${aerospike-client}</version>
     </dependency>
     <dependency>
       <groupId>com.aerospike</groupId>
       <artifactId>spring-data-aerospike</artifactId>
-      <version>1.0.2.RELEASE</version>
+      <version>${spring-data-aerospike}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.session</groupId>
-      <artifactId>spring-session</artifactId>
-      <version>1.3.0.RELEASE</version>
+      <artifactId>spring-session-core</artifactId>
+      <version>${spring-session-core}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>${javax.annotation-api}</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.7.22</version>
+      <version>${mockito-core}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.6.2</version>
+      <version>${assertj-core}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>${spring-test}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
-      <version>3.0.1</version>
+      <version>${javax.servlet-api}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>4.3.8.RELEASE</version>
+      <version>${spring-web}</version>
       <scope>test</scope>
     </dependency> 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>${junit}</version>
       <scope>test</scope>
     </dependency> 
   </dependencies>
 
-
   <build>
       <plugins>
         <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.7</version>
-          <extensions>true</extensions>
-          <configuration>
-            <serverId>ossrh</serverId>
-            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>${maven-compiler-plugin}</version>
           <configuration>
-            <source>1.7</source>
-            <target>1.7</target>
+            <source>${maven-compiler-source}</source>
+            <target>${maven-compiler-target}</target>
           </configuration>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.2.1</version>
+          <version>${maven-source-plugin}</version>
           <executions>
             <execution>
               <id>attach-sources</id>
@@ -139,7 +152,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.9.1</version>
+          <version>${maven-javadoc-plugin}</version>
           <executions>
             <execution>
               <id>attach-javadocs</id>
@@ -153,7 +166,7 @@
  		<plugin>
             <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
+                <version>${maven-gpg-plugin}</version>
                   <executions>
                     <execution>
                       <id>sign-artifacts</id>
@@ -181,7 +194,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
+                <version>${maven-gpg-plugin}</version>
                   <executions>
                     <execution>
                       <id>sign-artifacts</id>
@@ -196,8 +209,4 @@
       </build>
     </profile>
   </profiles>
-  
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 </project>

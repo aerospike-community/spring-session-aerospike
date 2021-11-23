@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.aerospike.springframework.session.aerospike.config.annotation.web.http;
 
 import org.springframework.context.annotation.Bean;
@@ -24,12 +23,11 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.aerospike.core.AerospikeTemplate;
 import org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration;
 
-import com.aerospike.client.AerospikeClient;
-import com.aerospike.springframework.session.aerospike.AerospikeOperationsSessionRepository;
+import com.aerospike.springframework.session.aerospike.AerospikeIndexedSessionRepository;
 
 /**
- * Configuration class registering {@code AerospikeOperationsSessionRepository} 
- * bean. To import this configuration use {@link EnableAerospikeHttpSession} 
+ * Configuration class registering {@code AerospikeOperationsSessionRepository}
+ * bean. To import this configuration use {@link EnableAerospikeHttpSession}
  * annotation.
  *
  * @author Jeff Boone
@@ -38,35 +36,39 @@ import com.aerospike.springframework.session.aerospike.AerospikeOperationsSessio
  */
 @Configuration
 public class AerospikeHttpSessionConfiguration extends SpringHttpSessionConfiguration
-	implements ImportAware {
+        implements ImportAware {
 
-	private Integer maxInactiveIntervalInSeconds = 1800;
-	private String namespace;
+    private Integer maxInactiveIntervalInSeconds;
+    private String namespace;
 
-	@Bean
-	public AerospikeOperationsSessionRepository aerospikeSessionRepository(
-			AerospikeClient aerospikeClient) {
-		AerospikeOperationsSessionRepository repository = 
-				new AerospikeOperationsSessionRepository(new AerospikeTemplate(aerospikeClient, this.namespace));
-		repository.setMaxInactiveIntervalInSeconds(this.maxInactiveIntervalInSeconds);
-				
-		return repository;
-	}
+    @Bean
+    public AerospikeIndexedSessionRepository aerospikeSessionRepository(AerospikeTemplate aerospikeTemplate) {
+        AerospikeIndexedSessionRepository repository =
+                new AerospikeIndexedSessionRepository(aerospikeTemplate);
+        repository.setMaxInactiveIntervalInSeconds(this.maxInactiveIntervalInSeconds);
+        repository.setNamespace(this.namespace);
+        return repository;
+    }
 
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
-	
-	public void setMaxInactiveIntervalInSeconds(Integer maxInactiveIntervalInSeconds) {
-		this.maxInactiveIntervalInSeconds = maxInactiveIntervalInSeconds;
-	}
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 
-	public void setImportMetadata(AnnotationMetadata importMetadata) {
-		AnnotationAttributes attributes = AnnotationAttributes.fromMap(importMetadata
-				.getAnnotationAttributes(EnableAerospikeHttpSession.class.getName()));
-		this.maxInactiveIntervalInSeconds = attributes
-				.getNumber("maxInactiveIntervalInSeconds");
-		this.namespace = attributes.getString("namespace");
-	}
+    public void setMaxInactiveIntervalInSeconds(Integer maxInactiveIntervalInSeconds) {
+        this.maxInactiveIntervalInSeconds = maxInactiveIntervalInSeconds;
+    }
+
+    @Override
+    public void setImportMetadata(AnnotationMetadata importMetadata) {
+        AnnotationAttributes attributes = AnnotationAttributes.fromMap(importMetadata
+                .getAnnotationAttributes(EnableAerospikeHttpSession.class.getName()));
+        if (attributes != null) {
+            this.maxInactiveIntervalInSeconds = attributes.getNumber("maxInactiveIntervalInSeconds");
+            this.namespace = attributes.getString("namespace");
+        } else {
+            this.maxInactiveIntervalInSeconds = AerospikeIndexedSessionRepository.DEFAULT_INACTIVE_INTERVAL;
+            this.namespace = AerospikeIndexedSessionRepository.DEFAULT_NAMESPACE;
+        }
+    }
 }
 

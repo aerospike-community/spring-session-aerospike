@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.aerospike.springframework.session.aerospike.config.annotation.web.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.aerospike.client.Host;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.MapSessionRepository;
+import org.springframework.data.aerospike.config.AbstractAerospikeDataConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.aerospike.springframework.session.aerospike.AerospikeOperationsSessionRepository;
+import com.aerospike.springframework.session.aerospike.AerospikeIndexedSessionRepository;
 
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Tests for {@link AerospikeHttpSessionConfiguration}.
@@ -38,68 +38,64 @@ import com.aerospike.springframework.session.aerospike.AerospikeOperationsSessio
  */
 public class AerospikeHttpSessionConfigurationTests {
 
-	private static final int MAX_INACTIVE_INTERVAL_IN_SECONDS = 800;
-	private static final String TEST_NAMESPACE = "session_test";
+    private static final int MAX_INACTIVE_INTERVAL_IN_SECONDS = 800;
+    private static final String TEST_NAMESPACE = "session_test";
 
-	private AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+    private final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-	private AerospikeHttpSessionConfiguration aerospikeConfiguration;
-	
-	@Before
-	public void setup() {
-		this.aerospikeConfiguration = new AerospikeHttpSessionConfiguration();
-	}
-	
-	@After
-	public void after() {
-		if (this.context != null) {
-			this.context.close();
-		}
-	}
+    @After
+    public void after() {
+        this.context.close();
+    }
 
-	@Test
-	public void customMaxInactiveIntervalInSeconds() {
-		registerAndRefresh(CustomMaxInactiveIntervalInSecondsConfiguration.class);
+    @Test
+    public void customMaxInactiveIntervalInSeconds() {
+        registerAndRefresh(CustomMaxInactiveIntervalInSecondsConfiguration.class);
 
-		AerospikeOperationsSessionRepository repository = this.context
-				.getBean(AerospikeOperationsSessionRepository.class);
-		assertThat(repository).isNotNull();
-		assertThat(ReflectionTestUtils.getField(repository, "maxInactiveIntervalInSeconds"))
-				.isEqualTo(MAX_INACTIVE_INTERVAL_IN_SECONDS);
-	}
+        AerospikeIndexedSessionRepository repository = this.context
+                .getBean(AerospikeIndexedSessionRepository.class);
+        assertThat(repository).isNotNull();
+        assertThat(ReflectionTestUtils.getField(repository, "maxInactiveIntervalInSeconds"))
+                .isEqualTo(MAX_INACTIVE_INTERVAL_IN_SECONDS);
+    }
 
-	@Test
-	public void customNamespace() {
-		registerAndRefresh(CustomNamespaceConfiguration.class);
+    @Test
+    public void customNamespace() {
+        registerAndRefresh(CustomNamespaceConfiguration.class);
 
-		AerospikeOperationsSessionRepository repository = this.context
-				.getBean(AerospikeOperationsSessionRepository.class);
-		assertThat(repository).isNotNull();
-		assertThat(ReflectionTestUtils.getField(repository, "namespace"))
-				.isEqualTo(TEST_NAMESPACE);
-	}
+        AerospikeIndexedSessionRepository repository = this.context
+                .getBean(AerospikeIndexedSessionRepository.class);
+        assertThat(repository).isNotNull();
+        assertThat(ReflectionTestUtils.getField(repository, "namespace"))
+                .isEqualTo(TEST_NAMESPACE);
+    }
 
-	private void registerAndRefresh(Class<?>... annotatedClasses) {
-		this.context.register(annotatedClasses);
-		this.context.refresh();
-	}
+    private void registerAndRefresh(Class<?>... annotatedClasses) {
+        this.context.register(annotatedClasses);
+        this.context.refresh();
+    }
 
-	static class BaseConfiguration {
-		@Bean
-		public MapSessionRepository sessionRepository() {
-			return new MapSessionRepository();
-		}
-	}
-	
-	@Configuration
-	@EnableAerospikeHttpSession(maxInactiveIntervalInSeconds = MAX_INACTIVE_INTERVAL_IN_SECONDS)
-	static class CustomMaxInactiveIntervalInSecondsConfiguration extends BaseConfiguration {
+    static class BaseConfiguration extends AbstractAerospikeDataConfiguration {
+        @Override
+        protected Collection<Host> getHosts() {
+            return Collections.singleton(new Host("localhost", 3000));
+        }
 
-	}
+        @Override
+        protected String nameSpace() {
+            return "test";
+        }
+    }
 
-	@Configuration
-	@EnableAerospikeHttpSession(namespace = TEST_NAMESPACE)
-	static class CustomNamespaceConfiguration extends BaseConfiguration {
+    @Configuration
+    @EnableAerospikeHttpSession(maxInactiveIntervalInSeconds = MAX_INACTIVE_INTERVAL_IN_SECONDS)
+    static class CustomMaxInactiveIntervalInSecondsConfiguration extends BaseConfiguration {
 
-	}
+    }
+
+    @Configuration
+    @EnableAerospikeHttpSession(namespace = TEST_NAMESPACE)
+    static class CustomNamespaceConfiguration extends BaseConfiguration {
+
+    }
 }
